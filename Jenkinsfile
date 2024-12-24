@@ -5,6 +5,7 @@ pipeline {
         DOCKER_REGISTRY = "mdinesh28"
         DOCKER_IMAGE = "job-portal"
         DOCKER_CREDENTIALS = credentials('docker-hub')
+        // Go to Jenkins Dashboard → Manage Jenkins → Credentials.
     }
 
     stages {
