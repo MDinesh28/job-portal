@@ -62,11 +62,16 @@
 	</dependencies>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<executions>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>3.2.0</version> <!-- Add or update this to a compatible version -->
+        </plugin>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <executions>
                 <execution>
                     <id>repackage</id>
                     <goals>
@@ -77,8 +82,9 @@
                     </configuration>
                 </execution>
             </executions>
-			</plugin>
-		</plugins>
-	</build>
+        </plugin>
+    </plugins>
+</build>
+
 
 </project>
