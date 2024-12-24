@@ -2,8 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_REGISTRY = "your-docker-registry"
+        DOCKER_REGISTRY = "mdinesh28"
         DOCKER_IMAGE = "job-portal"
+        DOCKER_CREDENTIALS = credentials('docker-hub')
     }
 
     stages {
@@ -15,9 +16,9 @@ pipeline {
 
         stage('Build and Test') {
             steps {
-                sh 'mvn compile'
-                sh 'mvn package'
-                sh 'mvn install'
+                sh '/opt/maven/apache-maven-3.9.9/bin/mvn compile'
+                sh '/opt/maven/apache-maven-3.9.9/bin/mvn package'
+                sh '/opt/maven/apache-maven-3.9.9/bin/mvn install'
             }
         }
 
@@ -37,9 +38,12 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                sh """
-                    docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${BUILD_NUMBER}
-                """
+                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh """
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                        docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${BUILD_NUMBER}
+                    """
+                }
             }
         }
 
