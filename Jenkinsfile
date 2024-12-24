@@ -5,7 +5,6 @@ pipeline {
         DOCKER_REGISTRY = "mdinesh28"
         DOCKER_IMAGE = "job-portal"
         DOCKER_CREDENTIALS = credentials('docker-hub')
-        // Go to Jenkins Dashboard → Manage Jenkins → Credentials.
     }
 
     stages {
@@ -17,9 +16,9 @@ pipeline {
 
         stage('Build and Test') {
             steps {
-                sh 'mvn compile'
-                sh 'mvn package'
-                sh 'mvn install'
+                sh '/opt/maven/apache-maven-3.9.9/bin/mvn compile'
+                sh '/opt/maven/apache-maven-3.9.9/bin/mvn package'
+                sh '/opt/maven/apache-maven-3.9.9/bin/mvn install'
             }
         }
 
@@ -56,17 +55,36 @@ pipeline {
             }
         }
 
-        stage('Update Kubernetes Manifests') {
-            steps {
-                sh """
-                    sed -i 's|image: .*|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${BUILD_NUMBER}|' manifests/deployment.yaml
-                    git config user.email "your-email@example.com"
-                    git config user.name "Jenkins"
-                    git commit -am "Update image tag to ${BUILD_NUMBER}"
-                    git push
-                """
-            }
+       stage('Update Kubernetes Manifests') {
+    steps {
+        withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+            sh """
+                sed -i 's|image: .*|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${BUILD_NUMBER}|' manifests/deployment.yaml
+                git config user.email "mekadinesh28@gmail.com"
+                git config user.name "Jenkins"
+                
+                git init
+                git remote remove origin || true
+                git remote add origin https://github.com/MDinesh28/portal.git
+                
+                git add .
+                git commit -am "Update image tag to ${BUILD_NUMBER}"
+
+                # Ensure main branch exists and is tracked
+                git checkout -b main || git checkout main
+                git branch --set-upstream-to=origin/main main
+                
+                git push https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/MDinesh28/portal.git main --set-upstream origin main
+            """
         }
+    }
+}
+
+
+
+
+
+
 
         stage('Deploy to Kubernetes') {
             steps {
