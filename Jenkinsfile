@@ -16,9 +16,9 @@ pipeline {
 
         stage('Build and Test') {
             steps {
-                sh '/opt/maven/apache-maven-3.9.9/bin/mvn compile'
-                sh '/opt/maven/apache-maven-3.9.9/bin/mvn package'
-                sh '/opt/maven/apache-maven-3.9.9/bin/mvn install'
+                sh 'mvn compile'
+                sh 'mvn package'
+                sh 'mvn install'
             }
         }
 
