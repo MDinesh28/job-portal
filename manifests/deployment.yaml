@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: job-portal
-        image: your-docker-registry/job-portal:latest
+        image: mdinesh28/job-portal:latest
         ports:
         - containerPort: 8080
         resources:
